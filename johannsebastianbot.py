@@ -57,6 +57,8 @@ SCALES = {
     ]
 }
 
+BOT_PREFIX = "&"
+
 # key = os.getenv('key')  # just some things you might want inside the bot here.
 #
 # wkey = os.getenv('wkey')
@@ -64,7 +66,7 @@ SCALES = {
 # -------------------- INSTANCES ------------------ #
 intents = discord.Intents().all()
 
-bot = commands.Bot(command_prefix='&', intents=intents)  # defines the bot prefix.
+bot = commands.Bot(command_prefix=BOT_PREFIX, intents=intents)  # defines the bot prefix.
 bot.remove_command('help')  # Removes the auto help command as it can be buggy.
 
 # -------------------- EVENTS ------------------------- #
@@ -101,15 +103,25 @@ async def help(ctx):
 
     # embed.add_field(name="command", value="Command to try.")  # adding fields and such here.
 
-    embed.add_field(name="help", value="This is the help command.")
+    embed.add_field(name=f"{BOT_PREFIX}help", value="This is the help command.")
 
     # embed.add_field(name="ban", value="Bans the user.")
 
     # embed.add_field(name="kick", value="kicks the user.")
 
-    embed.add_field(name="imitate", value="Imitates the given words.")
+    embed.add_field(name=f"{BOT_PREFIX}imitate", value="Imitates the given words.")
 
-    embed.add_field(name="key", value="Returns a random key (tonality).")
+    embed.add_field(name=f"{BOT_PREFIX}key", value="Returns a random key (tonality).")
+
+    embed.add_field(name=f"{BOT_PREFIX}scale", value="Returns a random musical scale.")
+
+    embed.add_field(name=f"{BOT_PREFIX}catfacts", value="Returns a random cat fact (list changes every day).")
+
+    embed.add_field(name=f"{BOT_PREFIX}catpic", value="Returns a random cat picture.")
+
+    embed.add_field(name=f"{BOT_PREFIX}foxpic", value="Returns a random fox picture.")
+
+    embed.add_field(name=f"{BOT_PREFIX}cocktail", value="Returns a random cocktail recipe.")
 
     await ctx.send(embed=embed)  # sends the embed.
 
@@ -219,7 +231,6 @@ async def cocktail(ctx):
 #     await ctx.send(f'{user} banned for {reason}')
 
 # -------------------------------------------------------------- #
-
 
 # runs the server
 B.b()
