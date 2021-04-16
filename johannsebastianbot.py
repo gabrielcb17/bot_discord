@@ -52,8 +52,8 @@ async def on_command_error(ctx, error):
 
 
 @bot.command()
-async def command(ctx):
-    await ctx.send('This is your first command.')
+async def test(ctx):
+    await ctx.send('This is a test.')
 
 
 @bot.command()
@@ -86,5 +86,8 @@ async def on_member_join(member):
     await system_channel.send(f'{member} has joined the server and given the role musicuzinh@.')
 
 
-B.b()  # runs the bot token.
+# runs the server
+B.b()
+
+# runs the bot token.
 bot.run(TOKEN)

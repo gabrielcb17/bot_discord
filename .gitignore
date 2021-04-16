@@ -145,3 +145,4 @@ lib/
 
 # Rope
 .ropeproject
+/app.py
