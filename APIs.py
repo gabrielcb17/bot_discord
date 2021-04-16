@@ -31,4 +31,4 @@ def get_response(url):
     response = requests.get(url)
     return response.json()
 
-print(get_random_drink()[1])
+# print(get_random_drink()[1])

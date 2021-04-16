@@ -154,7 +154,21 @@ async def cocktail(ctx):
     )
     embed.set_image(url=drink[0]["strDrinkThumb"])
     embed.add_field(name="Ingredients", value=drink[1], inline=False)
-    embed.add_field(name="Instructions", value=drink[0]["strInstructions"], inline=False)
+
+    lenght = len(drink[0]["strInstructions"])
+
+    if len(drink[0]["strInstructions"]) > 1024:
+        embed.add_field(name="Instructions", value=drink[0]["strInstructions"][:1024], inline=False)
+        lenght -= 1024
+        i = 1
+        while lenght > 1024:
+            embed.add_field(name="...", value=drink[0]["strInstructions"][1024 * i:1024 * (i+1)], inline=False)
+            lenght -= 1024
+            i += 1
+        embed.add_field(name="...", value=drink[0]["strInstructions"][1024 * i:], inline=False)
+
+    else:
+        embed.add_field(name="Instructions", value=drink[0]["strInstructions"], inline=False)
 
     info = str(drink[2]).strip("[]")
     embed.set_footer(text=info)
