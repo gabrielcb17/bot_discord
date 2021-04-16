@@ -4,6 +4,7 @@ import B
 import discord.utils
 from random import choice
 from discord.ext import commands, tasks
+from APIs import *
 
 # -------------------- CONSTANTS -------------------- #
 TOKEN = decouple.config('JOHANNSEBASTIANBOT_TOKEN')
@@ -134,6 +135,31 @@ async def scale(ctx):
         scale += choice(value)
 
     await ctx.send(scale)
+
+@bot.command(aliases=["gatos", "cats"])
+async def catfacts(ctx):
+    cat_facts = get_cat_facts()
+    random_fact = choice(cat_facts)
+    await ctx.send(random_fact["text"])
+
+@bot.command(aliases=["drink"])
+async def cocktail(ctx):
+    drink = get_random_drink()
+
+    embed = discord.Embed(title=drink[0]["strDrink"],)
+    embed.set_author(
+        name="TheCocktailDB",
+        url="https://www.thecocktaildb.com/",
+        icon_url="https://www.thecocktaildb.com/images/cocktail_left.png"
+    )
+    embed.set_image(url=drink[0]["strDrinkThumb"])
+    embed.add_field(name="Ingredients", value=drink[1], inline=False)
+    embed.add_field(name="Instructions", value=drink[0]["strInstructions"], inline=False)
+
+    info = str(drink[2]).strip("[]")
+    embed.set_footer(text=info)
+
+    await ctx.send(embed=embed)
 
 # @bot.command()
 # @commands.has_permissions(administrator=True)
