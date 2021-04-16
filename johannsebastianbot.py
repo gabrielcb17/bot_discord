@@ -142,6 +142,36 @@ async def catfacts(ctx):
     random_fact = choice(cat_facts)
     await ctx.send(random_fact["text"])
 
+@bot.command(aliases=["cat", "gatinho"])
+async def catpic(ctx):
+    url = get_cat_pics()
+    embed = discord.Embed(title="meow 🐱")
+    embed.set_image(url=url)
+    await ctx.send(embed=embed)
+
+# API is buggy
+# @bot.command(aliases=["dog", "cão", "doguinho", "cãozinho"])
+# async def dogpic(ctx):
+#     url = get_dog_pics()
+#     file_format = url.split(".")[-1]
+#     if file_format == "jpeg" or file_format == "jpg":
+#         embed = discord.Embed(title="woof 🐶")
+#         embed.set_image(url=url)
+#         await ctx.send(embed=embed)
+#     else:
+#         embed = discord.Embed(title="woof 🐶")
+#         embed.add_field(
+#             name="Sorry, image not found 🙁",
+#             value="that's unfortunate, but no good boyz were available for the photo shooting"
+#         )
+
+@bot.command(aliases=["fox", "raposa"])
+async def foxpic(ctx):
+    url = get_fox_pics()
+    embed = discord.Embed(title="WHAT DOES THE FOX SAY?? 🦊")
+    embed.set_image(url=url)
+    await ctx.send(embed=embed)
+
 @bot.command(aliases=["drink"])
 async def cocktail(ctx):
     drink = get_random_drink()
