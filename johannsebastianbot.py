@@ -217,18 +217,18 @@ async def cocktail(ctx):
 
     await ctx.send(embed=embed)
 
-# @bot.command()
-# @commands.has_permissions(administrator=True)
-# async def kick(ctx, user: discord.Member, *, reason):
-#     await user.kick(reason=reason)
-#     await ctx.send(f'{user} kicked for {reason}')
-#
-#
-# @bot.command()
-# @commands.has_permissions(administrator=True)
-# async def ban(ctx, user: discord.Member, *, reason):
-#     await user.kick(reason=reason)
-#     await ctx.send(f'{user} banned for {reason}')
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def kick(ctx, user: discord.Member, *, reason):
+    await user.kick(reason=reason)
+    await ctx.send(f'{user} kicked for {reason}')
+
+
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def ban(ctx, user: discord.Member, *, reason):
+    await user.kick(reason=reason)
+    await ctx.send(f'{user} banned for {reason}')
 
 # -------------------------------------------------------------- #
 
