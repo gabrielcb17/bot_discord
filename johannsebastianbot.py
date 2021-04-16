@@ -1,48 +1,90 @@
 import discord
 import decouple
 import B
-from discord.ext import commands
-from discord.utils import get
+import discord.utils
+from discord.ext import commands, tasks
 
-JOHANNSEBASTIANBOT_APP_ID = decouple.config("JOHANNSEBASTIANBOT_APP_ID")
-JOHANNSEBASTIANBOT_CLIENT_SECRET = decouple.config("JOHANNSEBASTIANBOT_CLIENT_SECRET")
-JOHANNSEBASTIANBOT_PUBLIC_KEY = decouple.config("JOHANNSEBASTIANBOT_PUBLIC_KEY")
-JOHANNSEBASTIANBOT_TOKEN = decouple.config("JOHANNSEBASTIANBOT_TOKEN")
+TOKEN = decouple.config('JOHANNSEBASTIANBOT_TOKEN')
 
-# client = discord.Client()
-client = commands.Bot(command_prefix="&")
-client.remove_command('help')
+# key = os.getenv('key')  # just some things you might want inside the bot here.
+#
+# wkey = os.getenv('wkey')
 
-@client.event
-async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+intents = discord.Intents().all()
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+# client = discord.Client(intents=intents)  # declaring what the bot is.
 
-    if message.content.startswith("$hello"):
-        await message.channel.send("Hello!")
+bot = commands.Bot(command_prefix='&', intents=intents)  # Makes the bot prefix.
+bot.remove_command('help')  # Removes the auto help command as it can be buggy.
 
 
-    # Deixa registrado quando alguém entra no server, e adiciona o título de <musicuzinh@>.
-@client.event
+
+@bot.event
+async def on_ready(ctx):
+    print("Bot joined/Updated successfully!")
+
+
+@bot.command()
+async def imitate(ctx, *, mssg=None):
+    if mssg == None:
+        await ctx.send('Put the message you need in.')
+    else:
+        await ctx.send(f'{mssg}')
+
+
+# @bot.command()
+# @commands.has_permissions(administrator=True)
+# async def kick(ctx, user: discord.Member, *, reason):
+#     await user.kick(reason=reason)
+#     await ctx.send(f'{user} kicked for {reason}')
+#
+#
+# @bot.command()
+# @commands.has_permissions(administrator=True)
+# async def ban(ctx, user: discord.Member, *, reason):
+#     await user.kick(reason=reason)
+#     await ctx.send(f'{user} banned for {reason}')
+
+
+@bot.event
+async def on_command_error(ctx, error):
+    await ctx.send(f'Error: {error}')
+
+
+@bot.command()
+async def command(ctx):
+    await ctx.send('This is your first command.')
+
+
+@bot.command()
+async def help(ctx):
+    embed = discord.Embed(title="Help", description="This page is for helping you guys understand the commands.",
+                          color=0xFFFFF)  # Declaring the help command is an embed.
+
+    # embed.add_field(name="command", value="Command to try.")  # adding fields and such here.
+
+    embed.add_field(name="help", value="This is the help command.")
+
+    # embed.add_field(name="ban", value="Bans the user.")
+    #
+    # embed.add_field(name="kick", value="kicks the user.")
+
+    embed.add_field(name="imitate", value="Imitates the given words.")
+
+    await ctx.send(embed=embed)  # sends the embed.
+
+
+# Deixa registrado quando alguém entra no server, e adiciona o título de <musicuzinh@>.
+@bot.event
 async def on_member_join(member):
-
-    role = get(member.guild.roles, name='musicuzinh@')
-    await member.add_roles(role)
     print(f'{member} has joined the server.')
 
-@client.command()
-async def command(ctx):
-    await ctx.send('This command was successful!')
+    role = discord.utils.get(member.guild.roles, id=831687556277076008)
+    await member.add_roles(role)
 
-@client.command()
-async def help(ctx):
-    embed = discord.Embed(name="Help", value="help command", color=0xFFFFFF)
-    embed.add_field(name="command", value="command description")
-    await ctx.send(embed=embed)
+    system_channel = member.guild.system_channel
+    await system_channel.send(f'{member} has joined the server and given the role musicuzinh@.')
 
-B.b()
-client.run(JOHANNSEBASTIANBOT_TOKEN)
+
+B.b()  # runs the bot token.
+bot.run(TOKEN)

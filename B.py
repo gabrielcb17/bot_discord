@@ -1,11 +1,11 @@
 from flask import Flask
 from threading import Thread
 
-app = Flask('')
+app = Flask('Discord Bot')
 
 @app.route('/')
 def main():
-    return 'SQUIDN'
+    return 'SERVER ONLINE'
 
 def run():
     app.run(host='0.0.0.0', port=8080)
