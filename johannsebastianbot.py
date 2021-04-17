@@ -241,7 +241,9 @@ async def profile(ctx, user: discord.Member=None):
     embed.add_field(name="Joined at", value=author.joined_at.strftime("%Y/%m/%d %H:%M"))
     embed.add_field(name="Roles", value=str_roles, inline=False)
     if author.activities:
-        embed.add_field(name="Now doing", value=author.activities)
+        activities = [author.activities[i].name for i in range(len(author.activities))]
+        str_activities = ", ".join(activities)
+        embed.add_field(name="Now doing", value=str_activities)
     embed.set_image(url=author.avatar_url)
 
     await ctx.send(embed=embed)
