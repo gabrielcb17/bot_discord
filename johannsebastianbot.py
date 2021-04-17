@@ -104,7 +104,7 @@ async def test(ctx):
 @bot.command(aliases=["ajuda"])
 async def help(ctx):
     prefix = await bot.get_prefix(ctx.message)
-    embed = discord.Embed(title="Help", description="This page is for helping you guys to understand the commands.",
+    embed = discord.Embed(title="Help", description="This is a description of all my commands.",
                           color=0xFFFFF)  # Declaring the help command is an embed.
 
     # embed.add_field(name="command", value="Command to try.")  # adding fields and such here.
