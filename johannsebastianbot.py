@@ -66,8 +66,13 @@ BOT_PREFIX = "&"
 # -------------------- INSTANCES ------------------ #
 intents = discord.Intents().all()
 
-bot = commands.Bot(command_prefix=BOT_PREFIX, intents=intents)  # defines the bot prefix.
-bot.remove_command('help')  # Removes the auto help command as it can be buggy.
+bot = commands.Bot(
+    command_prefix=BOT_PREFIX,   # defines the bot prefix.
+    intents=intents,
+    help_command=None,
+    strip_after_prefix=True
+)
+# bot.remove_command('help')  # Removes the auto help command as it can be buggy.
 
 # -------------------- EVENTS ------------------------- #
 @bot.event
@@ -98,30 +103,34 @@ async def test(ctx):
 
 @bot.command(aliases=["ajuda"])
 async def help(ctx):
+    prefix = await bot.get_prefix(ctx.message)
     embed = discord.Embed(title="Help", description="This page is for helping you guys understand the commands.",
                           color=0xFFFFF)  # Declaring the help command is an embed.
 
     # embed.add_field(name="command", value="Command to try.")  # adding fields and such here.
 
-    embed.add_field(name=f"{BOT_PREFIX}help", value="This is the help command.")
+    embed.add_field(name=f"{prefix}help", value="This is the help command.")
+
+    embed.add_field(name=f"{prefix}profile",
+                    value="Mention someone to see profile (don't mention anyone to see your own profile)")
 
     # embed.add_field(name="ban", value="Bans the user.")
 
     # embed.add_field(name="kick", value="kicks the user.")
 
-    embed.add_field(name=f"{BOT_PREFIX}imitate", value="Imitates the given words.")
+    embed.add_field(name=f"{prefix}imitate", value="Imitates the given words.")
 
-    embed.add_field(name=f"{BOT_PREFIX}key", value="Returns a random key (tonality).")
+    embed.add_field(name=f"{prefix}key", value="Returns a random key (tonality).")
 
-    embed.add_field(name=f"{BOT_PREFIX}scale", value="Returns a random musical scale.")
+    embed.add_field(name=f"{prefix}scale", value="Returns a random musical scale.")
 
-    embed.add_field(name=f"{BOT_PREFIX}catfacts", value="Returns a random cat fact (list changes every day).")
+    embed.add_field(name=f"{prefix}catfacts", value="Returns a random cat fact (list changes every day).")
 
-    embed.add_field(name=f"{BOT_PREFIX}catpic", value="Returns a random cat picture.")
+    embed.add_field(name=f"{prefix}catpic", value="Returns a random cat picture.")
 
-    embed.add_field(name=f"{BOT_PREFIX}foxpic", value="Returns a random fox picture.")
+    embed.add_field(name=f"{prefix}foxpic", value="Returns a random fox picture.")
 
-    embed.add_field(name=f"{BOT_PREFIX}cocktail", value="Returns a random cocktail recipe.")
+    embed.add_field(name=f"{prefix}cocktail", value="Returns a random cocktail recipe.")
 
     await ctx.send(embed=embed)  # sends the embed.
 
@@ -217,6 +226,28 @@ async def cocktail(ctx):
 
     await ctx.send(embed=embed)
 
+@bot.command(aliases=["perfil"])
+async def profile(ctx, user: discord.Member=None):
+    if user:
+        author = user
+    else:
+        author = ctx.author
+    roles = [author.roles[i].name for i in range(len(author.roles))]
+    str_roles = ", ".join(roles)
+
+    embed = discord.Embed(title=f"{author.name}'s profile")
+    if author.name != author.nick and author.nick is not None:
+        embed.add_field(name="a.k.a", value=author.nick)
+    embed.add_field(name="Joined at", value=author.joined_at.strftime("%Y/%m/%d %H:%M"))
+    embed.add_field(name="Roles", value=str_roles, inline=False)
+    if author.activities:
+        embed.add_field(name="Now doing", value=author.activities)
+    embed.set_image(url=author.avatar_url)
+
+    await ctx.send(embed=embed)
+
+
+# ------------------- ADMIN COMMANDS --------------------- #
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def kick(ctx, user: discord.Member, *, reason):
