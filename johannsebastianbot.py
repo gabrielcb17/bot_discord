@@ -83,6 +83,32 @@ async def on_ready(ctx):
 async def on_command_error(ctx, error):
     await ctx.send(f'Error: {error}')
 
+@bot.event
+async def on_raw_reaction_add(payload):
+    member = payload.member
+    if payload.channel_id == 830634684680634408:
+        if payload.emoji.name == "smite":
+            role = discord.utils.get(member.guild.roles, id=830654162307645460)
+            await member.add_roles(role)
+
+        if payload.emoji.name == "valorant":
+            role = discord.utils.get(member.guild.roles, id=830654267928608768)
+            await member.add_roles(role)
+
+@bot.event
+async def on_raw_reaction_remove(payload):
+    guild = await bot.fetch_guild(payload.guild_id)
+    print(guild)
+    member = await guild.fetch_member(payload.user_id)
+    print(member)
+    if payload.channel_id == 830634684680634408:
+        if payload.emoji.name == "smite":
+            role = discord.utils.get(member.guild.roles, id=830654162307645460)
+            await member.remove_roles(role)
+
+        if payload.emoji.name == "valorant":
+            role = discord.utils.get(member.guild.roles, id=830654267928608768)
+            await member.remove_roles(role)
 
 # Deixa registrado quando alguém entra no server, e adiciona o título de <musicuzinh@>.
 @bot.event
@@ -93,10 +119,59 @@ async def on_member_join(member):
     await member.add_roles(role)
 
     system_channel = member.guild.system_channel
-    await system_channel.send(f'{member} has joined the server and given the role musicuzinh@.')
+    await system_channel.send(f'{member} has joined the server and been given the role musicuzinh@.')
+
+    embed = discord.Embed(
+        title="JÁ CHEGOU O DISCO VOADOR!!!",
+        description=f"Seja muito bem-vinde, @{member}",
+        colour=discord.Colour.dark_red()
+    )
+    embed.add_field(name="Cargos", value="Reaja a essa mensagem pra pegar seu cargo gaymer (smite/valorant)")
+    embed.add_field(name="Aniversário", value='Envie "!set-user-birthday YYYY-MM-DD @vocêmesmo" para receber felicitações no dia do seu aniversário 😁')
+    embed.set_image(url="https://cdn.discordapp.com/attachments/828135970566176778/834916599869341727/WhatsApp_Image_2020-10-05_at_19.21.24.jpeg")
+
+    welcome_channel = discord.utils.get(member.guild.channels, id=830634684680634408)
+    welcome_msg = await welcome_channel.send(embed=embed)
+
+    smite_emoji = discord.utils.get(member.guild.emojis, name="smite")
+    valorant_emoji = discord.utils.get(member.guild.emojis, name="valorant")
+    await welcome_msg.add_reaction(smite_emoji)
+    await welcome_msg.add_reaction(valorant_emoji)
+
+@bot.event
+async def on_member_update(old_status, new_status):
+    stream_channel = discord.utils.get(new_status.guild.channels, id=830618241567031316)
+    activity = new_status.activity
+    if new_status == new_status.guild.owner and activity:
+        if activity.type == discord.ActivityType.streaming:
+            embed = discord.Embed(
+                title=activity.name,
+                description=f"Eaí @everyone, chega mais 😁\n"
+                            f"Tô jogando {activity.game}\n"
+                            f"{activity.url}",
+                colour=discord.Colour.dark_red()
+            )
+            embed.set_image(url=new_status.avatar_url)
+            embed.set_author(name=f"{new_status} is now live on Twitch!", url=activity.url, icon_url=new_status.avatar_url)
+
+            await stream_channel.send(embed=embed)
+            await stream_channel.edit(name="live-on-🔴")
+        else:
+            await stream_channel.edit(name="live-off-⚪")
+    elif activity:
+        embed = discord.Embed(
+            title=activity.name,
+            description=f"Eaí @everyone, {new_status} tá on 😁\n"
+                        f"Tá jogando {activity.game}\n"
+                        f"{activity.url}",
+            colour=discord.Colour.dark_red()
+        )
+        embed.set_image(url=new_status.avatar_url)
+        embed.set_author(name=f"{new_status} is now live on Twitch!", url=activity.url, icon_url=new_status.avatar_url)
+
+        await stream_channel.send(embed=embed)
 
 # ------------------ COMMANDS ------------------ #
-
 @bot.command(aliases=["teste"])
 async def test(ctx):
     await ctx.send('This is a test.')
@@ -104,19 +179,16 @@ async def test(ctx):
 @bot.command(aliases=["ajuda"])
 async def help(ctx):
     prefix = await bot.get_prefix(ctx.message)
-    embed = discord.Embed(title="Help", description="This is a description of all my commands.",
-                          color=0xFFFFF)  # Declaring the help command is an embed.
-
-    # embed.add_field(name="command", value="Command to try.")  # adding fields and such here.
+    embed = discord.Embed(
+        title="Help",
+        description="This is a description of all my commands.",
+        color=0xFFFFF
+    )
 
     embed.add_field(name=f"{prefix}help", value="This is the help command.")
 
     embed.add_field(name=f"{prefix}profile",
                     value="Mention someone to see profile (don't mention anyone to see your own profile)")
-
-    # embed.add_field(name="ban", value="Bans the user.")
-
-    # embed.add_field(name="kick", value="kicks the user.")
 
     embed.add_field(name=f"{prefix}imitate", value="Imitates the given words.")
 
@@ -262,6 +334,24 @@ async def kick(ctx, user: discord.Member, *, reason):
 async def ban(ctx, user: discord.Member, *, reason):
     await user.kick(reason=reason)
     await ctx.send(f'{user} banned for {reason}')
+
+# @bot.command()
+# @commands.has_permissions(administrator=True)
+# async def roles(ctx):
+#     channel = discord.utils.get(ctx.guild.channels, id=832469130744561734)
+#     embed = discord.Embed(
+#         title="Get over (your role) here!!!",
+#         description="React to this message to get a role :)",
+#         colour=discord.Colour.orange(),
+#     )
+#     smite_emoji = discord.utils.get(ctx.guild.emojis, name="smite")
+#     valorant_emoji = discord.utils.get(ctx.guild.emojis, name="valorant")
+#     embed.add_field(name="Smite", value=f"{smite_emoji}")
+#     embed.add_field(name="Valorant", value=f"{valorant_emoji}")
+#     embed.set_image(url="https://cdn.discordapp.com/attachments/828135970566176778/834901322250584114/scorpion.jpg")
+#     msg = await channel.send(embed=embed)
+#     await msg.add_reaction(smite_emoji)
+#     await msg.add_reaction(valorant_emoji)
 
 # -------------------------------------------------------------- #
 
