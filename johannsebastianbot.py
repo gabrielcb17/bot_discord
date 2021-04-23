@@ -159,17 +159,18 @@ async def on_member_update(old_status, new_status):
         else:
             await stream_channel.edit(name="live-off-⚪")
     elif activity:
-        embed = discord.Embed(
-            title=activity.name,
-            description=f"Eaí @everyone, {new_status} tá on 😁\n"
-                        f"Tá jogando {activity.game}\n"
-                        f"{activity.url}",
-            colour=discord.Colour.dark_red()
-        )
-        embed.set_image(url=new_status.avatar_url)
-        embed.set_author(name=f"{new_status} is now live on Twitch!", url=activity.url, icon_url=new_status.avatar_url)
+        if activity.type == discord.ActivityType.streaming:
+            embed = discord.Embed(
+                title=activity.name,
+                description=f"Eaí @everyone, {new_status} tá on 😁\n"
+                            f"Tá jogando {activity.game}\n"
+                            f"{activity.url}",
+                colour=discord.Colour.dark_red()
+            )
+            embed.set_image(url=new_status.avatar_url)
+            embed.set_author(name=f"{new_status} is now live on Twitch!", url=activity.url, icon_url=new_status.avatar_url)
 
-        await stream_channel.send(embed=embed)
+            await stream_channel.send(embed=embed)
 
 # ------------------ COMMANDS ------------------ #
 @bot.command(aliases=["teste"])
